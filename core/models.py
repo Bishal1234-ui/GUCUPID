@@ -67,6 +67,10 @@ class Profile(models.Model):
     # Preferences - storing as comma-separated string
     preferences = models.TextField(blank=True, help_text="Comma-separated gender preferences")
     
+    # Education
+    college = models.CharField(max_length=200, blank=True, default='')
+    department = models.CharField(max_length=200, blank=True, default='')
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

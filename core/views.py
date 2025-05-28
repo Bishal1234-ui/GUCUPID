@@ -81,6 +81,8 @@ def profile_setup(request):
         drinking = request.POST.get('drinking', '')
         smoking = request.POST.get('smoking', '')
         preferences = request.POST.getlist('preferences')
+        college = request.POST.get('college', '')
+        department = request.POST.get('department', '')
         
         if profile:
             profile.name = name
@@ -92,6 +94,8 @@ def profile_setup(request):
             profile.zodiac = zodiac
             profile.drinking = drinking
             profile.smoking = smoking
+            profile.college = college
+            profile.department = department
             profile.set_preferences_list(preferences)
         else:
             profile = Profile.objects.create(
@@ -103,7 +107,9 @@ def profile_setup(request):
                 personality=personality,
                 zodiac=zodiac,
                 drinking=drinking,
-                smoking=smoking
+                smoking=smoking,
+                college=college,
+                department=department
             )
             profile.set_hobbies_list(hobbies)
             profile.set_preferences_list(preferences)
