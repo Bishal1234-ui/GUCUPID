@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}LoveConnect - Login & Register{% endblock %}
+
+{% block content %}
+<div class="min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid lg:grid-cols-2 gap-8 min-h-screen items-center">
+            <!-- Left side - Form -->
+            <div class="flex flex-col justify-center">
+                <div class="mx-auto w-full max-w-sm space-y-6">
+                    <!-- Logo -->
+                    <div class="text-center">
+                        <div class="mx-auto w-16 h-16 gradient-romantic rounded-full flex items-center justify-center mb-4 animate-float">
+                            <svg class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </div>
+                        <h1 class="text-3xl font-bold text-gray-900">LoveConnect</h1>
+                        <p class="text-gray-600 mt-2">Find your perfect match</p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl romantic-shadow border-0 p-8">
+                        <div class="text-center mb-6">
+                            <h2 class="text-2xl font-bold" id="form-title">Welcome Back</h2>
+                            <p class="text-gray-600 mt-2" id="form-subtitle">Sign in to continue your journey</p>
+                        </div>
+                        
+                        <form method="post" class="space-y-4" id="auth-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="login" id="form-action">
+                            
+                            <div class="space-y-2" id="email-field" style="display: none;">
+                                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-romantic-pink focus:border-transparent"
+                                />
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                                <input
+                                    id="username"
+                                    name="username"
+                                    type="text"
+                                    placeholder="Enter your username"
+                                    required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-romantic-pink focus:border-transparent"
+                                />
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-romantic-pink focus:border-transparent"
+                                />
+                            </div>
+
+                            <button 
+                                type="submit" 
+                                class="w-full gradient-romantic text-white font-semibold py-3 px-4 rounded-lg hover:opacity-90 transition-all duration-300"
+                            >
+                                <span id="submit-text">Sign In</span>
+                            </button>
+                        </form>
+
+                        <div class="mt-6 text-center">
+                            <button
+                                onclick="toggleForm()"
+                                class="text-romantic-pink hover:text-romantic-purple transition-colors font-medium"
+                                id="toggle-button"
+                            >
+                                Don't have an account? Sign up
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right side - Hero Section -->
+            <div class="flex flex-col justify-center text-center lg:text-left space-y-8">
+                <div>
+                    <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+                        Find Your
+                        <span class="bg-gradient-to-r from-romantic-pink to-romantic-purple bg-clip-text text-transparent"> Perfect Match</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 leading-relaxed">
+                        Connect with like-minded people, share your interests, and discover meaningful relationships in a safe and beautiful environment.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 romantic-shadow">
+                        <svg class="h-12 w-12 text-romantic-pink mb-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2c0 .55.45 1 1 1s1-.45 1-1c0-2.21-1.79-4-4-4S14 1.79 14 4c0 1.11.89 2 2 2s2-.89 2-2zM12 13c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm-8 7l.75.75L12 20l7.25.75L20 20c0-4.42-3.58-8-8-8s-8 3.58-8 8z"/>
+                        </svg>
+                        <h3 class="font-semibold text-gray-900 mb-2">Smart Matching</h3>
+                        <p class="text-gray-600 text-sm">Our algorithm finds compatible matches based on your preferences and interests.</p>
+                    </div>
+
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 romantic-shadow">
+                        <svg class="h-12 w-12 text-romantic-purple mb-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                        </svg>
+                        <h3 class="font-semibold text-gray-900 mb-2">Real-time Chat</h3>
+                        <p class="text-gray-600 text-sm">Connect instantly with your matches through our secure messaging system.</p>
+                    </div>
+
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 romantic-shadow">
+                        <svg class="h-12 w-12 text-romantic-pink mb-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18,8A6,6 0 0,0 12,2A6,6 0 0,0 6,8A6,6 0 0,0 12,14A6,6 0 0,0 18,8M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,16C8.69,16 2,17.34 2,20.5V22H22V20.5C22,17.34 15.31,16 12,16Z"/>
+                        </svg>
+                        <h3 class="font-semibold text-gray-900 mb-2">Safe & Secure</h3>
+                        <p class="text-gray-600 text-sm">Your privacy and safety are our top priorities with verified profiles.</p>
+                    </div>
+
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 romantic-shadow">
+                        <svg class="h-12 w-12 text-romantic-purple mb-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <h3 class="font-semibold text-gray-900 mb-2">Meaningful Connections</h3>
+                        <p class="text-gray-600 text-sm">Build lasting relationships with people who share your values and interests.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let isLogin = true;
+
+function toggleForm() {
+    isLogin = !isLogin;
+    
+    const formTitle = document.getElementById('form-title');
+    const formSubtitle = document.getElementById('form-subtitle');
+    const formAction = document.getElementById('form-action');
+    const submitText = document.getElementById('submit-text');
+    const toggleButton = document.getElementById('toggle-button');
+    const emailField = document.getElementById('email-field');
+    
+    if (isLogin) {
+        formTitle.textContent = 'Welcome Back';
+        formSubtitle.textContent = 'Sign in to continue your journey';
+        formAction.value = 'login';
+        submitText.textContent = 'Sign In';
+        toggleButton.textContent = "Don't have an account? Sign up";
+        emailField.style.display = 'none';
+        document.getElementById('email').required = false;
+    } else {
+        formTitle.textContent = 'Create Account';
+        formSubtitle.textContent = 'Start your journey to find love';
+        formAction.value = 'register';
+        submitText.textContent = 'Create Account';
+        toggleButton.textContent = 'Already have an account? Sign in';
+        emailField.style.display = 'block';
+        document.getElementById('email').required = true;
+    }
+}
+</script>
+{% endblock %}

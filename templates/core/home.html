@@ -1,0 +1,452 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - LoveConnect{% endblock %}
+
+{% block content %}
+<div class="min-h-screen">
+    <div class="max-w-md mx-auto bg-white min-h-screen shadow-xl pb-20">
+        <!-- Header -->
+        <header class="gradient-romantic px-6 py-4 flex items-center justify-center">
+            <div class="flex items-center space-x-3">
+                <svg class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <h1 class="text-xl font-bold text-white">GUCupid</h1>
+            </div>
+        </header>
+
+        <!-- Tab Content -->
+        <div class="flex-1 overflow-hidden">
+            <!-- Discover Tab -->
+            <div id="discover-tab" class="tab-content">
+                <div class="p-6 h-full">
+                    {% if potential_matches %}
+                        <div class="relative h-[500px]" id="card-stack">
+                            {% for profile in potential_matches %}
+                            <div class="swipe-card absolute inset-0 bg-white rounded-3xl romantic-shadow overflow-hidden border-0" data-user-id="{{ profile.user.id }}" data-current-photo="0" {% if not forloop.first %}style="display: none;"{% endif %}>
+                                <!-- Photo Section -->
+                                <div class="relative h-full bg-gray-200 overflow-hidden">
+                                    {% if profile.get_photos %}
+                                        {% for photo in profile.get_photos %}
+                                        <img src="{{ photo }}" alt="{{ profile.name }}'s photo" class="profile-photo w-full h-full object-cover absolute inset-0 transition-opacity duration-300" {% if not forloop.first %}style="opacity: 0;"{% endif %}>
+                                        {% endfor %}
+                                        
+                                        <!-- Photo Navigation Arrows -->
+                                        {% if profile.get_photos|length > 1 %}
+                                        <button onclick="changePhoto({{ profile.user.id }}, -1)" class="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/50 rounded-full flex items-center justify-center text-white transition-all z-20">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                            </svg>
+                                        </button>
+                                        <button onclick="changePhoto({{ profile.user.id }}, 1)" class="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/50 rounded-full flex items-center justify-center text-white transition-all z-20">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                            </svg>
+                                        </button>
+                                        
+                                        <!-- Photo Indicators -->
+                                        <div class="absolute top-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+                                            {% for photo in profile.get_photos %}
+                                            <div class="photo-indicator w-2 h-2 rounded-full transition-all {% if forloop.first %}bg-white{% else %}bg-white/50{% endif %}"></div>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="w-full h-full bg-gradient-to-br from-romantic-pink to-romantic-purple flex items-center justify-center">
+                                            <span class="text-6xl text-white font-bold">{{ profile.name|first|upper }}</span>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <!-- Gradient overlay -->
+                                    <div class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                                    
+                                    <!-- Profile info overlay -->
+                                    <div class="absolute bottom-6 left-6 right-6 text-white">
+                                        <div class="mb-4">
+                                            <h3 class="text-3xl font-bold mb-2">{{ profile.name }}, {{ profile.age }}</h3>
+                                            {% if profile.bio %}
+                                            <p class="text-white/90 text-sm mb-3 line-clamp-2">{{ profile.bio }}</p>
+                                            {% endif %}
+                                            
+                                            <!-- Interests -->
+                                            {% if profile.get_hobbies_list %}
+                                            <div class="flex flex-wrap gap-2 mb-4">
+                                                {% for hobby in profile.get_hobbies_list|slice:":3" %}
+                                                <span class="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium capitalize">
+                                                    {{ hobby }}
+                                                </span>
+                                                {% endfor %}
+                                                {% if profile.get_hobbies_list|length > 3 %}
+                                                <span class="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium">
+                                                    +{{ profile.get_hobbies_list|length|add:"-3" }} more
+                                                </span>
+                                                {% endif %}
+                                            </div>
+                                            {% endif %}
+                                            
+                                            <!-- Quick details -->
+                                            <div class="flex items-center text-sm text-white/80">
+                                                <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                                </svg>
+                                                <span>2 miles away</span>
+                                                {% if profile.personality %}
+                                                <span class="mx-2">•</span>
+                                                <span class="capitalize">{{ profile.personality }}</span>
+                                                {% endif %}
+                                                {% if profile.zodiac %}
+                                                <span class="mx-2">•</span>
+                                                <span class="capitalize">{{ profile.zodiac }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Floating Action Buttons - Horizontal -->
+                                    <div class="absolute bottom-6 left-6 right-6 flex justify-center space-x-12">
+                                        <button onclick="handleAction({{ profile.user.id }}, false)" class="w-16 h-16 rounded-full bg-white shadow-xl border-2 border-red-100 text-red-500 hover:bg-red-50 hover:border-red-200 hover:scale-110 transition-all duration-300 flex items-center justify-center z-10">
+                                            <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                        
+                                        <button onclick="handleAction({{ profile.user.id }}, true)" class="w-16 h-16 rounded-full gradient-romantic text-white shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 flex items-center justify-center z-10">
+                                            <svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="flex flex-col items-center justify-center h-96 text-center">
+                            <svg class="h-16 w-16 text-gray-300 mb-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-2">No more profiles</h3>
+                            <p class="text-gray-500">Check back later for new people in your area!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Matches Tab -->
+            <div id="matches-tab" class="tab-content hidden">
+                <div class="p-6 space-y-4">
+                    <h2 class="text-2xl font-bold text-gray-900">Your Matches</h2>
+                    
+                    {% if matches %}
+                        <div class="space-y-3">
+                            {% for match in matches %}
+                            <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-romantic-pink to-romantic-purple rounded-full flex items-center justify-center text-white font-semibold">
+                                    {% if match.user1 == user %}
+                                        {{ match.user2.profile.name|first|upper }}
+                                    {% else %}
+                                        {{ match.user1.profile.name|first|upper }}
+                                    {% endif %}
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-900">
+                                        {% if match.user1 == user %}
+                                            {{ match.user2.profile.name }}
+                                        {% else %}
+                                            {{ match.user1.profile.name }}
+                                        {% endif %}
+                                    </h3>
+                                    <p class="text-sm text-gray-600">Say hello!</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <a href="{% url 'chat' match.id %}" class="px-4 py-2 bg-romantic-pink text-white rounded-full text-sm font-medium hover:bg-romantic-purple transition-colors">
+                                        Chat
+                                    </a>
+                                    <button onclick="unmatchUser({{ match.id }})" class="px-3 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium hover:bg-red-100 hover:text-red-600 transition-colors">
+                                        Unmatch
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="flex flex-col items-center justify-center h-64 text-center">
+                            <svg class="h-16 w-16 text-gray-300 mb-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                            </svg>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-2">No matches yet</h3>
+                            <p class="text-gray-500">Keep swiping to find your perfect match!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="profile-tab" class="tab-content hidden">
+                <div class="p-6 space-y-6">
+                    <div class="text-center">
+                        <div class="w-24 h-24 bg-gradient-to-br from-romantic-pink to-romantic-purple rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold">
+                            {{ user.username|first|upper }}
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">{{ user_profile.name }}</h2>
+                        <p class="text-gray-600">{{ user.email }}</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <a href="{% url 'profile_setup' %}" class="w-full flex items-center justify-start px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Edit Profile
+                        </a>
+                        
+                        <a href="{% url 'logout' %}" class="w-full flex items-center justify-center px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                            Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation - Fixed -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 grid grid-cols-3 z-50">
+            <button onclick="switchTab('discover')" class="tab-button flex flex-col items-center py-3 text-romantic-pink">
+                <svg class="h-5 w-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <span class="text-xs">Discover</span>
+            </button>
+            <button onclick="switchTab('matches')" class="tab-button flex flex-col items-center py-3 text-gray-400">
+                <svg class="h-5 w-5 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                </svg>
+                <span class="text-xs">Matches</span>
+            </button>
+            <button onclick="switchTab('profile')" class="tab-button flex flex-col items-center py-3 text-gray-400">
+                <svg class="h-5 w-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span class="text-xs">Profile</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Match Modal -->
+<div id="match-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-3xl p-8 text-center max-w-sm mx-4 romantic-shadow">
+        <div class="mx-auto w-20 h-20 gradient-romantic rounded-full flex items-center justify-center mb-6">
+            <svg class="h-10 w-10 text-white fill-current" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+        </div>
+        
+        <h3 class="text-3xl font-bold text-gray-900 mb-2">It's a Match! 💕</h3>
+        <p class="text-gray-600 text-lg mb-6">You and someone special liked each other</p>
+        
+        <div class="space-y-3">
+            <button onclick="switchTab('matches'); closeMatchModal();" class="w-full gradient-romantic text-white font-semibold py-3 px-4 rounded-lg hover:opacity-90 transition-all">
+                Start Chatting
+            </button>
+            <button onclick="closeMatchModal()" class="w-full border-2 border-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-50 transition-all">
+                Keep Swiping
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentCardIndex = 0;
+const cards = document.querySelectorAll('.swipe-card');
+
+function switchTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('text-romantic-pink');
+        btn.classList.add('text-gray-400');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName + '-tab').classList.remove('hidden');
+    event.target.closest('.tab-button').classList.remove('text-gray-400');
+    event.target.closest('.tab-button').classList.add('text-romantic-pink');
+}
+
+function showNextCard() {
+    if (currentCardIndex < cards.length - 1) {
+        cards[currentCardIndex].style.display = 'none';
+        currentCardIndex++;
+        
+        // Animate next card in
+        const nextCard = cards[currentCardIndex];
+        nextCard.style.display = 'block';
+        nextCard.style.opacity = '0';
+        nextCard.style.transform = 'scale(0.9) translateY(20px)';
+        nextCard.style.transition = 'all 0.4s ease-out';
+        
+        setTimeout(() => {
+            nextCard.style.opacity = '1';
+            nextCard.style.transform = 'scale(1) translateY(0)';
+        }, 50);
+        
+        setTimeout(() => {
+            nextCard.style.transition = '';
+        }, 450);
+    } else {
+        // No more cards
+        showNoMoreCardsMessage();
+    }
+}
+
+function showNoMoreCardsMessage() {
+    const cardStack = document.getElementById('card-stack');
+    if (cardStack) {
+        cardStack.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full text-center p-8">
+                <svg class="h-16 w-16 text-gray-300 mb-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">No More Profiles</h3>
+                <p class="text-gray-500 mb-4">You've seen everyone in your area! Check back later for new profiles.</p>
+                <button onclick="location.reload()" class="px-6 py-3 gradient-romantic text-white rounded-full font-medium hover:opacity-90 transition-opacity">
+                    Refresh
+                </button>
+            </div>
+        `;
+    }
+}
+
+function showMatchModal() {
+    document.getElementById('match-modal').classList.remove('hidden');
+}
+
+function closeMatchModal() {
+    document.getElementById('match-modal').classList.add('hidden');
+}
+
+async function handleAction(userId, isLike) {
+    const currentCard = cards[currentCardIndex];
+    
+    // Add swipe animation
+    if (currentCard) {
+        currentCard.style.transition = 'transform 0.5s ease-out, opacity 0.3s ease-out';
+        if (isLike) {
+            currentCard.style.transform = 'translateX(100%) rotate(20deg)';
+        } else {
+            currentCard.style.transform = 'translateX(-100%) rotate(-20deg)';
+        }
+        currentCard.style.opacity = '0';
+    }
+    
+    try {
+        const response = await fetch('{% url "like_profile" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                is_like: isLike
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Show match modal if it's a match
+            if (data.match_created) {
+                setTimeout(() => {
+                    showMatchModal();
+                }, 500);
+            }
+            
+            // Move to next card after animation
+            setTimeout(() => {
+                if (currentCard) {
+                    currentCard.style.transform = '';
+                    currentCard.style.opacity = '';
+                    currentCard.style.transition = '';
+                }
+                showNextCard();
+            }, 500);
+        } else {
+            // Reset card position on error
+            if (currentCard) {
+                currentCard.style.transform = '';
+                currentCard.style.opacity = '';
+                currentCard.style.transition = '';
+            }
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        // Reset card position on error
+        if (currentCard) {
+            currentCard.style.transform = '';
+            currentCard.style.opacity = '';
+            currentCard.style.transition = '';
+        }
+        alert('An error occurred. Please try again.');
+    }
+}
+
+function changePhoto(userId, direction) {
+    const card = document.querySelector(`[data-user-id="${userId}"]`);
+    if (!card) return;
+    
+    const photos = card.querySelectorAll('.profile-photo');
+    const indicators = card.querySelectorAll('.photo-indicator');
+    const currentPhotoIndex = parseInt(card.dataset.currentPhoto);
+    
+    let newIndex = currentPhotoIndex + direction;
+    if (newIndex < 0) newIndex = photos.length - 1;
+    if (newIndex >= photos.length) newIndex = 0;
+    
+    // Hide current photo
+    photos[currentPhotoIndex].style.opacity = '0';
+    indicators[currentPhotoIndex].classList.remove('bg-white');
+    indicators[currentPhotoIndex].classList.add('bg-white/50');
+    
+    // Show new photo
+    photos[newIndex].style.opacity = '1';
+    indicators[newIndex].classList.remove('bg-white/50');
+    indicators[newIndex].classList.add('bg-white');
+    
+    // Update current photo index
+    card.dataset.currentPhoto = newIndex;
+}
+
+async function unmatchUser(matchId) {
+    if (!confirm('Are you sure you want to unmatch? This action cannot be undone.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/unmatch/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                match_id: matchId
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Remove the match from the UI
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    }
+}
+</script>
+{% endblock %}
