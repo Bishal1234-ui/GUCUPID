@@ -39,9 +39,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Save message to database
         message = await self.save_message(message_content, sender_username)
-        
-        # Get the other user for notification
-        other_user = await self.get_other_user(message.sender)
 
         # Send message to room group
         await self.channel_layer.group_send(
@@ -56,18 +53,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             }
         )
-        
-        # Send notification to other user
-        if other_user:
-            await self.channel_layer.group_send(
-                f'notifications_{other_user.id}',
-                {
-                    'type': 'message_notification',
-                    'message': f'{message.sender.username} sent you a message',
-                    'sender': message.sender.username,
-                    'match_id': self.match_id
-                }
-            )
 
     async def chat_message(self, event):
         message = event['message']
@@ -86,8 +71,3 @@ class ChatConsumer(AsyncWebsocketConsumer):
             sender=user,
             content=content
         )
-    
-    @database_sync_to_async
-    def get_other_user(self, sender):
-        match = Match.objects.get(id=self.match_id)
-        return match.user1 if match.user2 == sender else match.user2
