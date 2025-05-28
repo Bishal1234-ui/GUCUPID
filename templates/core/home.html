@@ -360,18 +360,48 @@
 let currentCardIndex = 0;
 const cards = document.querySelectorAll('.swipe-card');
 
-function switchTab(tabName) {
-    // Hide all tabs
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+// Tab switching with refresh functionality
+function refreshAndShowTab(tabName) {
+    // Store the current tab in localStorage
+    localStorage.setItem('currentTab', tabName);
+
+    // If clicking the same active tab, refresh the page
+    const currentActiveTab = document.querySelector('.tab-button.active')?.dataset.tab;
+    if (currentActiveTab === tabName) {
+        location.reload();
+        return;
+    }
+
+    // Update active button
     document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.classList.remove('text-romantic-pink');
+        btn.classList.remove('active', 'text-romantic-pink');
         btn.classList.add('text-gray-400');
     });
 
-    // Show selected tab
-    document.getElementById(tabName + '-tab').classList.remove('hidden');
-    event.target.closest('.tab-button').classList.remove('text-gray-400');
-    event.target.closest('.tab-button').classList.add('text-romantic-pink');
+    const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+    if (activeButton) {
+        activeButton.classList.add('active', 'text-romantic-pink');
+        activeButton.classList.remove('text-gray-400');
+    }
+
+    // Show/hide content
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+    });
+    const targetTab = document.getElementById(tabName + '-tab');
+    if (targetTab) {
+        targetTab.classList.remove('hidden');
+    }
+}
+
+// Initialize page with correct tab on load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedTab = localStorage.getItem('currentTab') || 'discover';
+    refreshAndShowTab(savedTab);
+});
+
+function switchTab(tabName) {
+    refreshAndShowTab(tabName);
 }
 
 function showNextCard() {
@@ -411,7 +441,7 @@ function showNoMoreCardsMessage() {
                 <h3 class="text-xl font-semibold text-gray-700 mb-2">No More Profiles</h3>
                 <p class="text-gray-500 mb-4">You've seen everyone in your area! Check back later for new profiles.</p>
                 <div class="space-y-3">
-                    <button onclick="location.reload()" class="px-6 py-3 gradient-romantic text-white rounded-full font-medium hover:opacity-90 transition-opacity">
+                    <buttononclick="location.reload()" class="px-6 py-3 gradient-romantic text-white rounded-full font-medium hover:opacity-90 transition-opacity">
                         Refresh
                     </button>
                     <button onclick="resetRejectedProfiles()" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-colors">
@@ -624,13 +654,13 @@ function showAppPopup(title, message, type) {
     const popup = document.createElement('div');
     popup.id = 'app-popup';
     popup.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-    
+
     const bgColor = type === 'success' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200';
     const iconColor = type === 'success' ? 'text-green-600' : 'text-red-600';
     const icon = type === 'success' ? 
         '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>' :
         '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
-    
+
     popup.innerHTML = `
         <div class="bg-white rounded-lg p-6 max-w-sm mx-4 border-2 ${bgColor}">
             <div class="flex items-center mb-4">
@@ -646,9 +676,9 @@ function showAppPopup(title, message, type) {
             </button>
         </div>
     `;
-    
+
     document.body.appendChild(popup);
-    
+
     // Auto-remove after 5 seconds
     setTimeout(() => {
         if (document.getElementById('app-popup')) {
