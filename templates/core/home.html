@@ -367,6 +367,110 @@
 let currentCardIndex = 0;
 const cards = document.querySelectorAll('.swipe-card');
 
+// Notification WebSocket
+let notificationSocket = null;
+
+function initNotificationSocket() {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const socketUrl = `${protocol}//${window.location.host}/ws/notifications/`;
+    
+    notificationSocket = new WebSocket(socketUrl);
+    
+    notificationSocket.onopen = function(e) {
+        console.log('Notification socket connected');
+    };
+    
+    notificationSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        
+        if (data.type === 'match') {
+            showNotificationPopup('🎉 New Match!', data.message, 'match');
+            playNotificationSound();
+        } else if (data.type === 'message') {
+            showNotificationPopup('💬 New Message', data.message, 'message');
+            playNotificationSound();
+        }
+    };
+    
+    notificationSocket.onclose = function(e) {
+        console.log('Notification socket closed');
+        // Reconnect after 3 seconds
+        setTimeout(initNotificationSocket, 3000);
+    };
+    
+    notificationSocket.onerror = function(e) {
+        console.error('Notification socket error:', e);
+    };
+}
+
+function playNotificationSound() {
+    // Create and play notification sound
+    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+X');
+    audio.volume = 0.3;
+    audio.play().catch(e => console.log('Could not play notification sound:', e));
+}
+
+function showNotificationPopup(title, message, type) {
+    // Remove any existing notification popup
+    const existingPopup = document.getElementById('notification-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+    
+    // Create notification popup
+    const popup = document.createElement('div');
+    popup.id = 'notification-popup';
+    popup.className = 'fixed top-20 right-4 z-50 max-w-sm';
+    
+    const bgColor = type === 'match' ? 'bg-gradient-to-r from-pink-500 to-purple-600' : 'bg-gradient-to-r from-blue-500 to-indigo-600';
+    
+    popup.innerHTML = `
+        <div class="${bgColor} text-white p-4 rounded-lg shadow-2xl transform transition-all duration-300 translate-x-full">
+            <div class="flex items-start">
+                <div class="flex-1">
+                    <h4 class="font-bold text-sm">${title}</h4>
+                    <p class="text-xs opacity-90 mt-1">${message}</p>
+                </div>
+                <button onclick="closeNotificationPopup()" class="ml-2 text-white hover:text-gray-200">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    // Animate in
+    setTimeout(() => {
+        popup.querySelector('div').classList.remove('translate-x-full');
+    }, 100);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        closeNotificationPopup();
+    }, 3000);
+}
+
+function closeNotificationPopup() {
+    const popup = document.getElementById('notification-popup');
+    if (popup) {
+        const content = popup.querySelector('div');
+        content.classList.add('translate-x-full');
+        setTimeout(() => {
+            popup.remove();
+        }, 300);
+    }
+}
+
+// Initialize notification socket when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initNotificationSocket();
+    const savedTab = localStorage.getItem('currentTab') || 'discover';
+    refreshAndShowTab(savedTab);
+});</script>
+
 // Tab switching with refresh functionality
 function refreshAndShowTab(tabName) {
     // Store the current tab in localStorage
@@ -408,11 +512,7 @@ function refreshAndShowTab(tabName) {
     }
 }
 
-// Initialize page with correct tab on load
-document.addEventListener('DOMContentLoaded', function() {
-    const savedTab = localStorage.getItem('currentTab') || 'discover';
-    refreshAndShowTab(savedTab);
-});
+// This is now handled in the notification section above
 
 function switchTab(tabName) {
     refreshAndShowTab(tabName);
