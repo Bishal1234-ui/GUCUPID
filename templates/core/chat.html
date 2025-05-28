@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 
 {% block title %}Chat with {{ other_profile.name }} - LoveConnect{% endblock %}
@@ -14,8 +15,12 @@
             </a>
             
             <div class="flex items-center space-x-3 flex-1">
-                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white font-semibold">
-                    {{ other_profile.name|first|upper }}
+                <div class="w-10 h-10 rounded-full overflow-hidden bg-white/20 flex items-center justify-center">
+                    {% if other_profile.get_photos %}
+                        <img src="{{ other_profile.get_photos.0 }}" alt="{{ other_profile.name }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <span class="text-white font-semibold">{{ other_profile.name|first|upper }}</span>
+                    {% endif %}
                 </div>
                 <div>
                     <h1 class="text-lg font-semibold text-white">{{ other_profile.name }}</h1>
@@ -40,8 +45,12 @@
             <div class="flex {% if message.sender == user %}justify-end{% else %}justify-start{% endif %}">
                 <div class="flex items-start space-x-2 max-w-xs">
                     {% if message.sender != user %}
-                    <div class="w-8 h-8 bg-gradient-to-br from-romantic-pink to-romantic-purple rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
-                        {{ other_profile.name|first|upper }}
+                    <div class="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-romantic-pink to-romantic-purple flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                        {% if other_profile.get_photos %}
+                            <img src="{{ other_profile.get_photos.0 }}" alt="{{ other_profile.name }}" class="w-full h-full object-cover">
+                        {% else %}
+                            {{ other_profile.name|first|upper }}
+                        {% endif %}
                     </div>
                     {% endif %}
                     
@@ -95,36 +104,34 @@ function scrollToBottom() {
 // Initial scroll
 scrollToBottom();
 
+// WebSocket connection
+const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+const wsUrl = `${protocol}//${window.location.host}/ws/chat/{{ match.id }}/`;
+const chatSocket = new WebSocket(wsUrl);
+
+chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    addMessage(data.message, data.message.sender === '{{ user.username }}');
+    scrollToBottom();
+};
+
+chatSocket.onclose = function(e) {
+    console.error('Chat socket closed unexpectedly');
+};
+
 // Handle form submission
-messageForm.addEventListener('submit', async function(e) {
+messageForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
     const content = messageInput.value.trim();
     if (!content) return;
     
-    try {
-        const response = await fetch('{% url "send_message" match.id %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({ content: content })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            messageInput.value = '';
-            addMessage(data.message, true);
-            scrollToBottom();
-        } else {
-            alert('Error sending message: ' + data.error);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to send message. Please try again.');
-    }
+    chatSocket.send(JSON.stringify({
+        'message': content,
+        'sender': '{{ user.username }}'
+    }));
+    
+    messageInput.value = '';
 });
 
 function addMessage(message, isOwn) {
@@ -134,8 +141,12 @@ function addMessage(message, isOwn) {
     messageDiv.innerHTML = `
         <div class="flex items-start space-x-2 max-w-xs">
             ${!isOwn ? `
-            <div class="w-8 h-8 bg-gradient-to-br from-romantic-pink to-romantic-purple rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
-                {{ other_profile.name|first|upper }}
+            <div class="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-romantic-pink to-romantic-purple flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                {% if other_profile.get_photos %}
+                    <img src="{{ other_profile.get_photos.0 }}" alt="{{ other_profile.name }}" class="w-full h-full object-cover">
+                {% else %}
+                    {{ other_profile.name|first|upper }}
+                {% endif %}
             </div>
             ` : ''}
             
@@ -152,23 +163,5 @@ function addMessage(message, isOwn) {
     
     messagesContainer.appendChild(messageDiv);
 }
-
-// Poll for new messages every 3 seconds
-setInterval(async function() {
-    try {
-        const response = await fetch('{% url "get_messages" match.id %}');
-        const data = await response.json();
-        
-        if (data.messages) {
-            const currentMessages = messagesContainer.querySelectorAll('.flex').length - 1; // Subtract match notification
-            if (data.messages.length > currentMessages) {
-                // New messages available, reload the page for simplicity
-                location.reload();
-            }
-        }
-    } catch (error) {
-        console.error('Error polling messages:', error);
-    }
-}, 3000);
 </script>
 {% endblock %}

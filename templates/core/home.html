@@ -30,7 +30,7 @@
                                         {% for photo in profile.get_photos %}
                                         <img src="{{ photo }}" alt="{{ profile.name }}'s photo" class="profile-photo w-full h-full object-cover absolute inset-0 transition-opacity duration-300" {% if not forloop.first %}style="opacity: 0;"{% endif %}>
                                         {% endfor %}
-                                        
+
                                         <!-- Photo Navigation Arrows -->
                                         {% if profile.get_photos|length > 1 %}
                                         <button onclick="changePhoto({{ profile.user.id }}, -1)" class="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-black/30 hover:bg-black/50 rounded-full flex items-center justify-center text-white transition-all z-20">
@@ -43,7 +43,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                             </svg>
                                         </button>
-                                        
+
                                         <!-- Photo Indicators -->
                                         <div class="absolute top-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
                                             {% for photo in profile.get_photos %}
@@ -56,10 +56,10 @@
                                             <span class="text-6xl text-white font-bold">{{ profile.name|first|upper }}</span>
                                         </div>
                                     {% endif %}
-                                    
+
                                     <!-- Gradient overlay -->
                                     <div class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                                    
+
                                     <!-- Profile info overlay -->
                                     <div class="absolute bottom-6 left-6 right-6 text-white">
                                         <div class="mb-4">
@@ -67,7 +67,7 @@
                                             {% if profile.bio %}
                                             <p class="text-white/90 text-sm mb-3 line-clamp-2">{{ profile.bio }}</p>
                                             {% endif %}
-                                            
+
                                             <!-- Interests -->
                                             {% if profile.get_hobbies_list %}
                                             <div class="flex flex-wrap gap-2 mb-4">
@@ -83,7 +83,7 @@
                                                 {% endif %}
                                             </div>
                                             {% endif %}
-                                            
+
                                             <!-- Quick details -->
                                             <div class="flex items-center text-sm text-white/80">
                                                 <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
@@ -109,7 +109,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                                             </svg>
                                         </button>
-                                        
+
                                         <button onclick="handleAction({{ profile.user.id }}, true)" class="w-16 h-16 rounded-full gradient-romantic text-white shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 flex items-center justify-center z-10">
                                             <svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
                                                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -136,16 +136,24 @@
             <div id="matches-tab" class="tab-content hidden">
                 <div class="p-6 space-y-4">
                     <h2 class="text-2xl font-bold text-gray-900">Your Matches</h2>
-                    
+
                     {% if matches %}
                         <div class="space-y-3">
                             {% for match in matches %}
                             <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center space-x-4">
-                                <div class="w-12 h-12 bg-gradient-to-br from-romantic-pink to-romantic-purple rounded-full flex items-center justify-center text-white font-semibold">
+                                <div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-romantic-pink to-romantic-purple flex items-center justify-center text-white font-semibold">
                                     {% if match.user1 == user %}
-                                        {{ match.user2.profile.name|first|upper }}
+                                        {% if match.user2.profile.get_photos %}
+                                            <img src="{{ match.user2.profile.get_photos.0 }}" alt="{{ match.user2.profile.name }}" class="w-full h-full object-cover">
+                                        {% else %}
+                                            {{ match.user2.profile.name|first|upper }}
+                                        {% endif %}
                                     {% else %}
-                                        {{ match.user1.profile.name|first|upper }}
+                                        {% if match.user1.profile.get_photos %}
+                                            <img src="{{ match.user1.profile.get_photos.0 }}" alt="{{ match.user1.profile.name }}" class="w-full h-full object-cover">
+                                        {% else %}
+                                            {{ match.user1.profile.name|first|upper }}
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                                 <div class="flex-1">
@@ -199,7 +207,7 @@
                             </svg>
                             Edit Profile
                         </a>
-                        
+
                         <a href="{% url 'logout' %}" class="w-full flex items-center justify-center px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
                             Sign Out
                         </a>
@@ -240,10 +248,10 @@
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
         </div>
-        
+
         <h3 class="text-3xl font-bold text-gray-900 mb-2">It's a Match! 💕</h3>
         <p class="text-gray-600 text-lg mb-6">You and someone special liked each other</p>
-        
+
         <div class="space-y-3">
             <button onclick="switchTab('matches'); closeMatchModal();" class="w-full gradient-romantic text-white font-semibold py-3 px-4 rounded-lg hover:opacity-90 transition-all">
                 Start Chatting
@@ -266,7 +274,7 @@ function switchTab(tabName) {
         btn.classList.remove('text-romantic-pink');
         btn.classList.add('text-gray-400');
     });
-    
+
     // Show selected tab
     document.getElementById(tabName + '-tab').classList.remove('hidden');
     event.target.closest('.tab-button').classList.remove('text-gray-400');
@@ -277,19 +285,19 @@ function showNextCard() {
     if (currentCardIndex < cards.length - 1) {
         cards[currentCardIndex].style.display = 'none';
         currentCardIndex++;
-        
+
         // Animate next card in
         const nextCard = cards[currentCardIndex];
         nextCard.style.display = 'block';
         nextCard.style.opacity = '0';
         nextCard.style.transform = 'scale(0.9) translateY(20px)';
         nextCard.style.transition = 'all 0.4s ease-out';
-        
+
         setTimeout(() => {
             nextCard.style.opacity = '1';
             nextCard.style.transform = 'scale(1) translateY(0)';
         }, 50);
-        
+
         setTimeout(() => {
             nextCard.style.transition = '';
         }, 450);
@@ -327,7 +335,7 @@ function closeMatchModal() {
 
 async function handleAction(userId, isLike) {
     const currentCard = cards[currentCardIndex];
-    
+
     // Add swipe animation
     if (currentCard) {
         currentCard.style.transition = 'transform 0.5s ease-out, opacity 0.3s ease-out';
@@ -338,7 +346,7 @@ async function handleAction(userId, isLike) {
         }
         currentCard.style.opacity = '0';
     }
-    
+
     try {
         const response = await fetch('{% url "like_profile" %}', {
             method: 'POST',
@@ -351,17 +359,23 @@ async function handleAction(userId, isLike) {
                 is_like: isLike
             })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             // Show match modal if it's a match
             if (data.match_created) {
-                setTimeout(() => {
-                    showMatchModal();
-                }, 500);
+                // Show match popup
+                const popup = document.getElementById('match-modal');
+                const otherUserName = document.getElementById('other-user-name');
+                const messageButton = document.getElementById('message-button');
+
+                otherUserName.textContent = currentCard.querySelector('h3').textContent;
+                messageButton.setAttribute('data-match-id', data.match_id);
+
+                popup.classList.remove('hidden');
             }
-            
+
             // Move to next card after animation
             setTimeout(() => {
                 if (currentCard) {
@@ -395,25 +409,25 @@ async function handleAction(userId, isLike) {
 function changePhoto(userId, direction) {
     const card = document.querySelector(`[data-user-id="${userId}"]`);
     if (!card) return;
-    
+
     const photos = card.querySelectorAll('.profile-photo');
     const indicators = card.querySelectorAll('.photo-indicator');
     const currentPhotoIndex = parseInt(card.dataset.currentPhoto);
-    
+
     let newIndex = currentPhotoIndex + direction;
     if (newIndex < 0) newIndex = photos.length - 1;
     if (newIndex >= photos.length) newIndex = 0;
-    
+
     // Hide current photo
     photos[currentPhotoIndex].style.opacity = '0';
     indicators[currentPhotoIndex].classList.remove('bg-white');
     indicators[currentPhotoIndex].classList.add('bg-white/50');
-    
+
     // Show new photo
     photos[newIndex].style.opacity = '1';
     indicators[newIndex].classList.remove('bg-white/50');
     indicators[newIndex].classList.add('bg-white');
-    
+
     // Update current photo index
     card.dataset.currentPhoto = newIndex;
 }
@@ -422,7 +436,7 @@ async function unmatchUser(matchId) {
     if (!confirm('Are you sure you want to unmatch? This action cannot be undone.')) {
         return;
     }
-    
+
     try {
         const response = await fetch('/unmatch/', {
             method: 'POST',
@@ -434,9 +448,9 @@ async function unmatchUser(matchId) {
                 match_id: matchId
             })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             // Remove the match from the UI
             location.reload();
@@ -448,5 +462,25 @@ async function unmatchUser(matchId) {
         alert('An error occurred. Please try again.');
     }
 }
+
+function closeMatchPopup() {
+        document.getElementById('match-modal').classList.add('hidden');
+    }
+
+    function goToChat() {
+        const messageButton = document.getElementById('message-button');
+        const matchId = messageButton.getAttribute('data-match-id');
+        if (matchId) {
+            window.location.href = `/chat/${matchId}/`;
+        }
+    }
+
+    // Add event listener for the message button
+    document.addEventListener('DOMContentLoaded', function() {
+        const messageButton = document.getElementById('message-button');
+        if (messageButton) {
+            messageButton.addEventListener('click', goToChat);
+        }
+    });
 </script>
 {% endblock %}
