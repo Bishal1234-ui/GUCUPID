@@ -147,7 +147,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
-    "https://106c5fa9-c041-475b-955f-9d42c3ac0a6e-00-2ky22vq0j2n4b.picard.replit.dev:8000",
+    "https://c11dbdc5-e08e-4bac-bf18-2799cadc9ca0-00-3gwsdzbgkd8o.riker.replit.dev:8000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -156,8 +156,18 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000", 
-    "https://106c5fa9-c041-475b-955f-9d42c3ac0a6e-00-2ky22vq0j2n4b.picard.replit.dev:8000",
-    "https://106c5fa9-c041-475b-955f-9d42c3ac0a6e-00-2ky22vq0j2n4b.picard.replit.dev",
+    "https://c11dbdc5-e08e-4bac-bf18-2799cadc9ca0-00-3gwsdzbgkd8o.riker.replit.dev:8000",
+    "https://c11dbdc5-e08e-4bac-bf18-2799cadc9ca0-00-3gwsdzbgkd8o.riker.replit.dev",
+]
+
+# Add wildcard support for Replit domains
+import re
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.replit\.dev$",
+]
+
+CSRF_TRUSTED_ORIGIN_REGEXES = [
+    r"^https://.*\.replit\.dev$",
 ]
 
 # Login URLs
