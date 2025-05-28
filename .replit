@@ -19,7 +19,7 @@ localPort = 8000
 externalPort = 8000
 
 [workflows]
-runButton = "Project"
+runButton = "Django App"
 
 [[workflows.workflow]]
 name = "Project"
@@ -37,3 +37,12 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd /home/runner/workspace && daphne -b 0.0.0.0 -p 8000 dating_app.asgi:application"
+
+[[workflows.workflow]]
+name = "Django App"
+author = 7993157
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python manage.py runserver 0.0.0.0:8000"

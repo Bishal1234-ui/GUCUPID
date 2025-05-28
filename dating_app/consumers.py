@@ -1,7 +1,14 @@
 
 import json
+import os
+import django
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
+
+# Configure Django settings
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dating_app.settings')
+django.setup()
+
 from django.contrib.auth.models import User
 from core.models import Match, Message
 
