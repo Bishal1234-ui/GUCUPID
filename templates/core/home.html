@@ -200,8 +200,15 @@
 
             <!-- Matches Tab -->
             <div id="matches-tab" class="tab-content hidden">
-                <div class="p-6 space-y-4">
+                <div class="p-6 space-y-4 relative">
                     <h2 class="text-2xl font-bold text-gray-900">Your Matches</h2>
+                    
+                    <!-- Floating Refresh Button -->
+                    <button onclick="refreshMatches()" class="fixed bottom-24 right-6 w-14 h-14 gradient-romantic text-white rounded-full shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 flex items-center justify-center z-40 romantic-shadow">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                    </button>
 
                     {% if matches %}
                         <div class="space-y-3">
@@ -288,19 +295,19 @@
 
         <!-- Bottom Navigation - Fixed -->
         <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 grid grid-cols-3 z-50">
-            <button onclick="switchTab('discover')" class="tab-button flex flex-col items-center py-3 text-romantic-pink">
+            <button onclick="switchTab('discover')" data-tab="discover" class="tab-button flex flex-col items-center py-3 text-romantic-pink">
                 <svg class="h-5 w-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
                 <span class="text-xs">Discover</span>
             </button>
-            <button onclick="switchTab('matches')" class="tab-button flex flex-col items-center py-3 text-gray-400">
+            <button onclick="switchTab('matches')" data-tab="matches" class="tab-button flex flex-col items-center py-3 text-gray-400">
                 <svg class="h-5 w-5 mb-1" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
                 </svg>
                 <span class="text-xs">Matches</span>
             </button>
-            <button onclick="switchTab('profile')" class="tab-button flex flex-col items-center py-3 text-gray-400">
+            <button onclick="switchTab('profile')" data-tab="profile" class="tab-button flex flex-col items-center py-3 text-gray-400">
                 <svg class="h-5 w-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                 </svg>
@@ -641,6 +648,13 @@ async function resetRejectedProfiles() {
         console.error('Error:', error);
         showAppPopup('Error', 'An error occurred. Please try again.', 'error');
     }
+}
+
+function refreshMatches() {
+    showAppPopup('Refreshing...', 'Getting latest matches for you!', 'success');
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
 }
 
 function showAppPopup(title, message, type) {
