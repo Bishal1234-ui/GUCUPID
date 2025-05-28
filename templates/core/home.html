@@ -23,9 +23,9 @@
                     {% if potential_matches %}
                         <div class="relative h-[500px]" id="card-stack">
                             {% for profile in potential_matches %}
-                            <div class="swipe-card absolute inset-0 bg-white rounded-3xl romantic-shadow overflow-hidden border-0" data-user-id="{{ profile.user.id }}" data-current-photo="0" {% if not forloop.first %}style="display: none;"{% endif %}>
-                                <!-- Photo Section -->
-                                <div class="relative h-full bg-gray-200 overflow-hidden">
+                            <div class="swipe-card absolute inset-0 bg-white rounded-3xl romantic-shadow overflow-hidden border-0 flex flex-col" data-user-id="{{ profile.user.id }}" data-current-photo="0" {% if not forloop.first %}style="display: none;"{% endif %}>
+                                <!-- Photo Section - Fixed Height -->
+                                <div class="relative h-72 bg-gray-200 overflow-hidden flex-shrink-0">
                                     {% if profile.get_photos %}
                                         {% for photo in profile.get_photos %}
                                         <img src="{{ photo }}" alt="{{ profile.name }}'s photo" class="profile-photo w-full h-full object-cover absolute inset-0 transition-opacity duration-300" {% if not forloop.first %}style="opacity: 0;"{% endif %}>
@@ -56,66 +56,116 @@
                                             <span class="text-6xl text-white font-bold">{{ profile.name|first|upper }}</span>
                                         </div>
                                     {% endif %}
+                                </div>
 
-                                    <!-- Gradient overlay -->
-                                    <div class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-
-                                    <!-- Profile info overlay -->
-                                    <div class="absolute bottom-6 left-6 right-6 text-white">
-                                        <div class="mb-4">
-                                            <h3 class="text-3xl font-bold mb-2">{{ profile.name }}, {{ profile.age }}</h3>
-                                            {% if profile.bio %}
-                                            <p class="text-white/90 text-sm mb-3 line-clamp-2">{{ profile.bio }}</p>
-                                            {% endif %}
-
-                                            <!-- Interests -->
-                                            {% if profile.get_hobbies_list %}
-                                            <div class="flex flex-wrap gap-2 mb-4">
-                                                {% for hobby in profile.get_hobbies_list|slice:":3" %}
-                                                <span class="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium capitalize">
-                                                    {{ hobby }}
-                                                </span>
-                                                {% endfor %}
-                                                {% if profile.get_hobbies_list|length > 3 %}
-                                                <span class="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium">
-                                                    +{{ profile.get_hobbies_list|length|add:"-3" }} more
-                                                </span>
-                                                {% endif %}
-                                            </div>
-                                            {% endif %}
-
-                                            <!-- Quick details -->
-                                            <div class="flex items-center text-sm text-white/80">
-                                                <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                                                </svg>
-                                                <span>2 miles away</span>
-                                                {% if profile.personality %}
-                                                <span class="mx-2">•</span>
-                                                <span class="capitalize">{{ profile.personality }}</span>
-                                                {% endif %}
-                                                {% if profile.zodiac %}
-                                                <span class="mx-2">•</span>
-                                                <span class="capitalize">{{ profile.zodiac }}</span>
-                                                {% endif %}
-                                            </div>
+                                <!-- Profile Info Section - Scrollable -->
+                                <div class="flex-1 overflow-y-auto p-6 pb-24">
+                                    <!-- Name and Age -->
+                                    <div class="mb-4">
+                                        <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ profile.name }}, {{ profile.age }}</h3>
+                                        <div class="flex items-center text-sm text-gray-500">
+                                            <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                            </svg>
+                                            <span>2 miles away</span>
                                         </div>
                                     </div>
 
-                                    <!-- Floating Action Buttons - Horizontal -->
-                                    <div class="absolute bottom-6 left-6 right-6 flex justify-center space-x-12">
-                                        <button onclick="handleAction({{ profile.user.id }}, false)" class="w-16 h-16 rounded-full bg-white shadow-xl border-2 border-red-100 text-red-500 hover:bg-red-50 hover:border-red-200 hover:scale-110 transition-all duration-300 flex items-center justify-center z-10">
-                                            <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                        </button>
-
-                                        <button onclick="handleAction({{ profile.user.id }}, true)" class="w-16 h-16 rounded-full gradient-romantic text-white shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 flex items-center justify-center z-10">
-                                            <svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                            </svg>
-                                        </button>
+                                    <!-- Bio -->
+                                    {% if profile.bio %}
+                                    <div class="mb-6">
+                                        <h4 class="text-sm font-semibold text-gray-700 mb-2">About</h4>
+                                        <p class="text-gray-600 text-sm leading-relaxed">{{ profile.bio }}</p>
                                     </div>
+                                    {% endif %}
+
+                                    <!-- Hobbies -->
+                                    {% if profile.get_hobbies_list %}
+                                    <div class="mb-6">
+                                        <h4 class="text-sm font-semibold text-gray-700 mb-2">Interests</h4>
+                                        <div class="flex flex-wrap gap-2">
+                                            {% for hobby in profile.get_hobbies_list %}
+                                            <span class="bg-romantic-pink/10 text-romantic-purple px-3 py-1 rounded-full text-xs font-medium capitalize border border-romantic-pink/20">
+                                                {{ hobby }}
+                                            </span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+                                    <!-- Personal Details -->
+                                    <div class="space-y-3">
+                                        {% if profile.personality %}
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                                                <svg class="h-4 w-4 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Personality</p>
+                                                <p class="text-sm font-medium text-gray-900 capitalize">{{ profile.personality }}</p>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+
+                                        {% if profile.zodiac %}
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
+                                                <svg class="h-4 w-4 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Zodiac</p>
+                                                <p class="text-sm font-medium text-gray-900 capitalize">{{ profile.zodiac }}</p>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+
+                                        {% if profile.drinking %}
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                                <svg class="h-4 w-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M5 12V7a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H6a1 1 0 01-1-1zm6 0V7a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1h-2a1 1 0 01-1-1z"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Drinking</p>
+                                                <p class="text-sm font-medium text-gray-900 capitalize">{{ profile.drinking }}</p>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+
+                                        {% if profile.smoking %}
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                                                <svg class="h-4 w-4 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M18 16h1.5v-2c0-1.4-1.1-2.5-2.5-2.5s-2.5 1.1-2.5 2.5v2H16c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-6c0-1.1-.9-2-2-2zm-3-2c0-.8.7-1.5 1.5-1.5s1.5.7 1.5 1.5v2h-3v-2z"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-gray-500">Smoking</p>
+                                                <p class="text-sm font-medium text-gray-900 capitalize">{{ profile.smoking }}</p>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Fixed Action Buttons -->
+                                <div class="absolute bottom-6 left-6 right-6 flex justify-center space-x-12 z-30">
+                                    <button onclick="handleAction({{ profile.user.id }}, false)" class="w-16 h-16 rounded-full bg-white shadow-xl border-2 border-red-100 text-red-500 hover:bg-red-50 hover:border-red-200 hover:scale-110 transition-all duration-300 flex items-center justify-center">
+                                        <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+
+                                    <button onclick="handleAction({{ profile.user.id }}, true)" class="w-16 h-16 rounded-full gradient-romantic text-white shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 flex items-center justify-center">
+                                        <svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
                             {% endfor %}
@@ -193,8 +243,12 @@
             <div id="profile-tab" class="tab-content hidden">
                 <div class="p-6 space-y-6">
                     <div class="text-center">
-                        <div class="w-24 h-24 bg-gradient-to-br from-romantic-pink to-romantic-purple rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold">
-                            {{ user.username|first|upper }}
+                        <div class="w-24 h-24 bg-gradient-to-br from-romantic-pink to-romantic-purple rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
+                            {% if user_profile.get_photos %}
+                                <img src="{{ user_profile.get_photos.0 }}" alt="{{ user_profile.name }}" class="w-full h-full object-cover">
+                            {% else %}
+                                {{ user.username|first|upper }}
+                            {% endif %}
                         </div>
                         <h2 class="text-2xl font-bold text-gray-900">{{ user_profile.name }}</h2>
                         <p class="text-gray-600">{{ user.email }}</p>
@@ -250,14 +304,37 @@
         </div>
 
         <h3 class="text-3xl font-bold text-gray-900 mb-2">It's a Match! 💕</h3>
-        <p class="text-gray-600 text-lg mb-6">You and someone special liked each other</p>
+        <p class="text-gray-600 text-lg mb-6">You and <span id="other-user-name">someone special</span> liked each other</p>
 
         <div class="space-y-3">
-            <button onclick="switchTab('matches'); closeMatchModal();" class="w-full gradient-romantic text-white font-semibold py-3 px-4 rounded-lg hover:opacity-90 transition-all">
+            <button id="message-button" onclick="goToChat()" class="w-full gradient-romantic text-white font-semibold py-3 px-4 rounded-lg hover:opacity-90 transition-all">
                 Start Chatting
             </button>
             <button onclick="closeMatchModal()" class="w-full border-2 border-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-50 transition-all">
                 Keep Swiping
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Unmatch Confirmation Modal -->
+<div id="unmatch-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-3xl p-8 text-center max-w-sm mx-4 romantic-shadow">
+        <div class="mx-auto w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-6">
+            <svg class="h-10 w-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.084 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+            </svg>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">Unmatch User?</h3>
+        <p class="text-gray-600 mb-6">This action cannot be undone. All messages will be deleted.</p>
+
+        <div class="space-y-3">
+            <button onclick="confirmUnmatch()" class="w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-red-700 transition-all">
+                Yes, Unmatch
+            </button>
+            <button onclick="closeUnmatchModal()" class="w-full border-2 border-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-50 transition-all">
+                Cancel
             </button>
         </div>
     </div>
@@ -370,7 +447,10 @@ async function handleAction(userId, isLike) {
                 const otherUserName = document.getElementById('other-user-name');
                 const messageButton = document.getElementById('message-button');
 
-                otherUserName.textContent = currentCard.querySelector('h3').textContent;
+                const nameElement = currentCard.querySelector('h3');
+                if (nameElement) {
+                    otherUserName.textContent = nameElement.textContent.split(',')[0]; // Get just the name part
+                }
                 messageButton.setAttribute('data-match-id', data.match_id);
 
                 popup.classList.remove('hidden');
@@ -432,10 +512,15 @@ function changePhoto(userId, direction) {
     card.dataset.currentPhoto = newIndex;
 }
 
-async function unmatchUser(matchId) {
-    if (!confirm('Are you sure you want to unmatch? This action cannot be undone.')) {
-        return;
-    }
+let pendingUnmatchId = null;
+
+function unmatchUser(matchId) {
+    pendingUnmatchId = matchId;
+    document.getElementById('unmatch-modal').classList.remove('hidden');
+}
+
+async function confirmUnmatch() {
+    if (!pendingUnmatchId) return;
 
     try {
         const response = await fetch('/unmatch/', {
@@ -445,13 +530,14 @@ async function unmatchUser(matchId) {
                 'X-CSRFToken': '{{ csrf_token }}'
             },
             body: JSON.stringify({
-                match_id: matchId
+                match_id: pendingUnmatchId
             })
         });
 
         const data = await response.json();
 
         if (data.success) {
+            closeUnmatchModal();
             // Remove the match from the UI
             location.reload();
         } else {
@@ -463,24 +549,21 @@ async function unmatchUser(matchId) {
     }
 }
 
-function closeMatchPopup() {
-        document.getElementById('match-modal').classList.add('hidden');
-    }
+function closeUnmatchModal() {
+    document.getElementById('unmatch-modal').classList.add('hidden');
+    pendingUnmatchId = null;
+}
 
-    function goToChat() {
-        const messageButton = document.getElementById('message-button');
-        const matchId = messageButton.getAttribute('data-match-id');
-        if (matchId) {
-            window.location.href = `/chat/${matchId}/`;
-        }
-    }
+function closeMatchModal() {
+    document.getElementById('match-modal').classList.add('hidden');
+}
 
-    // Add event listener for the message button
-    document.addEventListener('DOMContentLoaded', function() {
-        const messageButton = document.getElementById('message-button');
-        if (messageButton) {
-            messageButton.addEventListener('click', goToChat);
-        }
-    });
+function goToChat() {
+    const messageButton = document.getElementById('message-button');
+    const matchId = messageButton.getAttribute('data-match-id');
+    if (matchId) {
+        window.location.href = `/chat/${matchId}/`;
+    }
+}
 </script>
 {% endblock %}

@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 
 {% block title %}Chat with {{ other_profile.name }} - LoveConnect{% endblock %}
@@ -13,7 +12,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
             </a>
-            
+
             <div class="flex items-center space-x-3 flex-1">
                 <div class="w-10 h-10 rounded-full overflow-hidden bg-white/20 flex items-center justify-center">
                     {% if other_profile.get_photos %}
@@ -53,7 +52,7 @@
                         {% endif %}
                     </div>
                     {% endif %}
-                    
+
                     <div>
                         <div class="p-3 rounded-xl {% if message.sender == user %}gradient-romantic text-white{% else %}bg-white border border-gray-200{% endif %}">
                             <p class="text-sm">{{ message.content }}</p>
@@ -122,22 +121,22 @@ chatSocket.onclose = function(e) {
 // Handle form submission
 messageForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    
+
     const content = messageInput.value.trim();
     if (!content) return;
-    
+
     chatSocket.send(JSON.stringify({
         'message': content,
         'sender': '{{ user.username }}'
     }));
-    
+
     messageInput.value = '';
 });
 
 function addMessage(message, isOwn) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `flex ${isOwn ? 'justify-end' : 'justify-start'}`;
-    
+
     messageDiv.innerHTML = `
         <div class="flex items-start space-x-2 max-w-xs">
             ${!isOwn ? `
@@ -149,7 +148,7 @@ function addMessage(message, isOwn) {
                 {% endif %}
             </div>
             ` : ''}
-            
+
             <div>
                 <div class="p-3 rounded-xl ${isOwn ? 'gradient-romantic text-white' : 'bg-white border border-gray-200'}">
                     <p class="text-sm">${message.content}</p>
@@ -160,7 +159,7 @@ function addMessage(message, isOwn) {
             </div>
         </div>
     `;
-    
+
     messagesContainer.appendChild(messageDiv);
 }
 </script>
