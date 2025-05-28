@@ -18,17 +18,17 @@
         <!-- Tab Content -->
         <div class="flex-1 overflow-hidden">
             <!-- Discover Tab -->
-            <div id="discover-tab" class="tab-content h-full">
-                <div class="h-full flex flex-col">
+            <div id="discover-tab" class="tab-content">
+                <div class="p-6 h-full">
                     {% if potential_matches %}
-                        <div class="relative flex-1 mx-6 mt-6 mb-24" id="card-stack">
+                        <div class="relative h-[500px]" id="card-stack">
                             {% for profile in potential_matches %}
                             <div class="swipe-card absolute inset-0 bg-white rounded-3xl romantic-shadow overflow-hidden border-0 flex flex-col" data-user-id="{{ profile.user.id }}" data-current-photo="0" {% if not forloop.first %}style="display: none;"{% endif %}>
-                                <!-- Photo Section - Takes 60% of available height -->
-                                <div class="relative bg-white flex-shrink-0" style="height: 60%; min-height: 300px;">
+                                <!-- Photo Section - Fixed Height -->
+                                <div class="relative h-72 bg-gray-200 overflow-hidden flex-shrink-0">
                                     {% if profile.get_photos %}
                                         {% for photo in profile.get_photos %}
-                                        <img src="{{ photo }}" alt="{{ profile.name }}'s photo" class="profile-photo w-full h-full object-contain bg-white absolute inset-0 transition-opacity duration-300" {% if not forloop.first %}style="opacity: 0;"{% endif %}>
+                                        <img src="{{ photo }}" alt="{{ profile.name }}'s photo" class="profile-photo w-full h-full object-cover absolute inset-0 transition-opacity duration-300" {% if not forloop.first %}style="opacity: 0;"{% endif %}>
                                         {% endfor %}
 
                                         <!-- Photo Navigation Arrows -->
@@ -58,8 +58,8 @@
                                     {% endif %}
                                 </div>
 
-                                <!-- Profile Info Section - Scrollable, takes remaining space -->
-                                <div class="flex-1 overflow-y-auto p-6 pb-6">
+                                <!-- Profile Info Section - Scrollable -->
+                                <div class="flex-1 overflow-y-auto p-6 pb-24">
                                     <!-- Name and Age -->
                                     <div class="mb-4">
                                         <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ profile.name }}, {{ profile.age }}</h3>
@@ -154,7 +154,7 @@
                                 </div>
 
                                 <!-- Fixed Action Buttons -->
-                                <div class="absolute bottom-4 left-6 right-6 flex justify-center space-x-12 z-30">
+                                <div class="absolute bottom-6 left-6 right-6 flex justify-center space-x-12 z-30">
                                     <button onclick="handleAction({{ profile.user.id }}, false)" class="w-16 h-16 rounded-full bg-white shadow-xl border-2 border-red-100 text-red-500 hover:bg-red-50 hover:border-red-200 hover:scale-110 transition-all duration-300 flex items-center justify-center">
                                         <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -171,7 +171,7 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <div class="flex flex-col items-center justify-center h-full text-center px-6">
+                        <div class="flex flex-col items-center justify-center h-96 text-center">
                             <svg class="h-16 w-16 text-gray-300 mb-4" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                             </svg>
@@ -388,7 +388,7 @@ function showNoMoreCardsMessage() {
     const cardStack = document.getElementById('card-stack');
     if (cardStack) {
         cardStack.innerHTML = `
-            <div class="absolute inset-0 bg-white rounded-3xl romantic-shadow flex flex-col items-center justify-center text-center p-8">
+            <div class="flex flex-col items-center justify-center h-full text-center p-8">
                 <svg class="h-16 w-16 text-gray-300 mb-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
