@@ -145,6 +145,10 @@ def home(request):
     user_profile = request.user.profile
     user_preferences = user_profile.get_preferences_list()
     
+    # If user has no preferences, show all genders
+    if not user_preferences:
+        user_preferences = ['male', 'female', 'nonbinary']
+    
     # Get users that current user has already liked/passed
     liked_user_ids = Like.objects.filter(from_user=request.user).values_list('to_user_id', flat=True)
     
@@ -155,13 +159,15 @@ def home(request):
         user_id__in=liked_user_ids
     )
     
-    # Filter by user's preferences
+    # Filter by user's preferences (if they have any)
     if user_preferences:
         potential_matches = potential_matches.filter(gender__in=user_preferences)
     
-    # Filter by mutual preferences (others who are interested in user's gender)
+    # Filter by mutual preferences (others who are interested in user's gender or have no preferences)
     potential_matches = potential_matches.filter(
-        Q(preferences__icontains=user_profile.gender) | Q(preferences='')
+        Q(preferences__icontains=user_profile.gender) | 
+        Q(preferences='') | 
+        Q(preferences__isnull=True)
     )
     
     # Get user's matches
@@ -169,9 +175,18 @@ def home(request):
         Q(user1=request.user) | Q(user2=request.user)
     ).order_by('-created_at')
     
+    # Get the final list of matches
+    final_matches = potential_matches[:10]  # Limit to 10 profiles
+    
+    # Debug: Print some information
+    print(f"User preferences: {user_preferences}")
+    print(f"User gender: {user_profile.gender}")
+    print(f"Total potential matches found: {potential_matches.count()}")
+    print(f"Final matches: {final_matches.count()}")
+    
     context = {
         'user_profile': user_profile,
-        'potential_matches': potential_matches[:10],  # Limit to 10 profiles
+        'potential_matches': final_matches,
         'matches': user_matches,
     }
     

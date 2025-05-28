@@ -20,6 +20,10 @@
             <!-- Discover Tab -->
             <div id="discover-tab" class="tab-content h-full">
                 <div class="h-full flex flex-col">
+                    <!-- Debug info -->
+                    <div class="p-4 bg-gray-100 text-sm">
+                        Debug: Found {{ potential_matches|length }} potential matches
+                    </div>
                     {% if potential_matches %}
                         <div class="relative flex-1 mx-6 mt-6 mb-24" id="card-stack">
                             {% for profile in potential_matches %}
