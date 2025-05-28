@@ -398,7 +398,7 @@ let currentCardIndex = 0;
 const cards = document.querySelectorAll('.swipe-card');
 
 // Tab switching with refresh functionality
-function refreshAndShowTab(tabName) {
+function switchTab(tabName) {
     // Store the current tab in localStorage
     localStorage.setItem('currentTab', tabName);
 
@@ -436,17 +436,28 @@ function refreshAndShowTab(tabName) {
     } else {
         hideFloatingButtons();
     }
+
+    // Hide splash screen when switching away from discover tab
+    const splashScreen = document.getElementById('splash-screen');
+    if (splashScreen && tabName !== 'discover') {
+        splashScreen.style.display = 'none';
+    }
 }
 
 // Initialize page with correct tab on load
 document.addEventListener('DOMContentLoaded', function() {
     const savedTab = localStorage.getItem('currentTab') || 'discover';
-    refreshAndShowTab(savedTab);
+    
+    // If we're loading a non-discover tab, hide splash screen immediately
+    if (savedTab !== 'discover') {
+        const splashScreen = document.getElementById('splash-screen');
+        if (splashScreen) {
+            splashScreen.style.display = 'none';
+        }
+    }
+    
+    switchTab(savedTab);
 });
-
-function switchTab(tabName) {
-    refreshAndShowTab(tabName);
-}
 
 function showNextCard() {
     if (currentCardIndex < cards.length - 1) {

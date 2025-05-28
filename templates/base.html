@@ -192,7 +192,8 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 min-h-screen">
-    <!-- Splash Screen -->
+    <!-- Splash Screen - Only show on auth page and first time on home page -->
+    {% if request.resolver_match.url_name == 'auth' or request.resolver_match.url_name == 'home' %}
     <div class="splash-screen" id="splash-screen">
         <div class="splash-logo">
             <svg class="heart-icon inline-block w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
@@ -207,6 +208,7 @@
             "Where hearts connect and love stories begin"
         </div>
     </div>
+    {% endif %}
 
     <!-- Page Loading Overlay -->
     <div class="page-loading" id="page-loading">
@@ -234,13 +236,24 @@
     <script>
         // Splash screen and loading management
         document.addEventListener('DOMContentLoaded', function() {
-            // Hide splash screen after 4 seconds
-            setTimeout(function() {
-                const splashScreen = document.getElementById('splash-screen');
-                if (splashScreen) {
-                    splashScreen.style.animation = 'fadeOut 0.5s ease-in-out forwards';
+            const splashScreen = document.getElementById('splash-screen');
+            
+            // Only show splash screen logic if it exists and should be shown
+            if (splashScreen) {
+                // Check if we're on home page and user is switching tabs
+                const currentTab = localStorage.getItem('currentTab');
+                const isHomePage = window.location.pathname === '/';
+                
+                // Don't show splash if user is on home page and switching to non-discover tabs
+                if (isHomePage && currentTab && currentTab !== 'discover') {
+                    splashScreen.style.display = 'none';
+                } else {
+                    // Show splash screen for 4 seconds
+                    setTimeout(function() {
+                        splashScreen.style.animation = 'fadeOut 0.5s ease-in-out forwards';
+                    }, 4000);
                 }
-            }, 4000);
+            }
         });
 
         // Show loading overlay during page transitions
