@@ -361,3 +361,24 @@ def unmatch_user(request):
             return JsonResponse({'error': str(e)}, status=500)
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+@login_required
+@csrf_exempt
+@require_http_methods(["POST"])
+def reset_rejected_profiles(request):
+    """Reset all rejected profiles (remove pass likes) for the current user"""
+    try:
+        # Delete all "pass" likes from the current user
+        deleted_count = Like.objects.filter(
+            from_user=request.user,
+            is_like=False
+        ).delete()[0]
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Reset {deleted_count} rejected profiles'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

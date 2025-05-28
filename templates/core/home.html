@@ -176,7 +176,15 @@
                                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                             </svg>
                             <h3 class="text-xl font-semibold text-gray-700 mb-2">No more profiles</h3>
-                            <p class="text-gray-500">Check back later for new people in your area!</p>
+                            <p class="text-gray-500 mb-4">Check back later for new people in your area!</p>
+                            <div class="space-y-3">
+                                <button onclick="location.reload()" class="px-6 py-3 gradient-romantic text-white rounded-full font-medium hover:opacity-90 transition-opacity">
+                                    Refresh
+                                </button>
+                                <button onclick="resetRejectedProfiles()" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-colors">
+                                    Bring Back Rejected Profiles
+                                </button>
+                            </div>
                         </div>
                     {% endif %}
                 </div>
@@ -394,9 +402,14 @@ function showNoMoreCardsMessage() {
                 </svg>
                 <h3 class="text-xl font-semibold text-gray-700 mb-2">No More Profiles</h3>
                 <p class="text-gray-500 mb-4">You've seen everyone in your area! Check back later for new profiles.</p>
-                <button onclick="location.reload()" class="px-6 py-3 gradient-romantic text-white rounded-full font-medium hover:opacity-90 transition-opacity">
-                    Refresh
-                </button>
+                <div class="space-y-3">
+                    <button onclick="location.reload()" class="px-6 py-3 gradient-romantic text-white rounded-full font-medium hover:opacity-90 transition-opacity">
+                        Refresh
+                    </button>
+                    <button onclick="resetRejectedProfiles()" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-colors">
+                        Bring Back Rejected Profiles
+                    </button>
+                </div>
             </div>
         `;
     }
@@ -563,6 +576,30 @@ function goToChat() {
     const matchId = messageButton.getAttribute('data-match-id');
     if (matchId) {
         window.location.href = `/chat/${matchId}/`;
+    }
+}
+
+async function resetRejectedProfiles() {
+    try {
+        const response = await fetch('{% url "reset_rejected_profiles" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('Rejected profiles have been reset! Refreshing page...');
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
     }
 }
 </script>
