@@ -439,3 +439,36 @@ def reset_rejected_profiles(request):
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@csrf_exempt
+@require_http_methods(["POST"])
+def delete_profile(request):
+    """Delete user profile and all associated data"""
+    try:
+        user = request.user
+        
+        # Delete all likes from and to this user
+        Like.objects.filter(Q(from_user=user) | Q(to_user=user)).delete()
+        
+        # Delete all matches involving this user
+        Match.objects.filter(Q(user1=user) | Q(user2=user)).delete()
+        
+        # Delete all messages from this user
+        Message.objects.filter(sender=user).delete()
+        
+        # Delete profile if exists
+        if hasattr(user, 'profile'):
+            user.profile.delete()
+        
+        # Delete the user account
+        user.delete()
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Profile deleted successfully'
+        })
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

@@ -40,23 +40,245 @@
         .animate-float {
             animation: float 3s ease-in-out infinite;
         }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #FF6B9D;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Splash Screen Animations */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FF6B9D 0%, #9B59B6 50%, #E91E63 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeOut 0.5s ease-in-out 3.5s forwards;
+        }
+        
+        .splash-logo {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            animation: bounceIn 1s ease-out;
+            margin-bottom: 20px;
+        }
+        
+        .splash-quote {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            max-width: 300px;
+            animation: slideUp 1s ease-out 0.5s both;
+            font-style: italic;
+            line-height: 1.5;
+        }
+        
+        .heart-icon {
+            color: #FFE4E9;
+            animation: heartBeat 1.5s ease-in-out infinite;
+            margin: 0 10px;
+        }
+        
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideUp {
+            0% {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes heartBeat {
+            0% {
+                transform: scale(1);
+            }
+            14% {
+                transform: scale(1.2);
+            }
+            28% {
+                transform: scale(1);
+            }
+            42% {
+                transform: scale(1.2);
+            }
+            70% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+        
+        /* Page loading overlay */
+        .page-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 8888;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .page-loading.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .content-wrapper {
+            opacity: 0;
+            animation: fadeInContent 0.5s ease-in-out 4s forwards;
+        }
+        
+        @keyframes fadeInContent {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 min-h-screen">
-    {% if messages %}
-        <div class="fixed top-4 right-4 z-50 space-y-2">
-            {% for message in messages %}
-                <div class="alert-message bg-white border-l-4 {% if message.tags == 'error' %}border-red-500 text-red-700{% else %}border-green-500 text-green-700{% endif %} p-4 rounded shadow-lg max-w-sm">
-                    {{ message }}
-                </div>
-            {% endfor %}
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splash-screen">
+        <div class="splash-logo">
+            <svg class="heart-icon inline-block w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            GUCupid
+            <svg class="heart-icon inline-block w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
         </div>
-    {% endif %}
+        <div class="splash-quote">
+            "Where hearts connect and love stories begin"
+        </div>
+    </div>
 
-    {% block content %}
-    {% endblock %}
+    <!-- Page Loading Overlay -->
+    <div class="page-loading" id="page-loading">
+        <div class="loading-spinner"></div>
+        <p class="mt-4 text-gray-600">Loading...</p>
+    </div>
+
+    <div class="content-wrapper" id="content-wrapper">
+    
+
+    {% if messages %}
+            <div class="fixed top-4 right-4 z-50 space-y-2">
+                {% for message in messages %}
+                    <div class="alert-message bg-white border-l-4 {% if message.tags == 'error' %}border-red-500 text-red-700{% else %}border-green-500 text-green-700{% endif %} p-4 rounded shadow-lg max-w-sm">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
 
     <script>
+        // Splash screen and loading management
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide splash screen after 4 seconds
+            setTimeout(function() {
+                const splashScreen = document.getElementById('splash-screen');
+                if (splashScreen) {
+                    splashScreen.style.animation = 'fadeOut 0.5s ease-in-out forwards';
+                }
+            }, 4000);
+        });
+
+        // Show loading overlay during page transitions
+        function showPageLoading() {
+            const pageLoading = document.getElementById('page-loading');
+            if (pageLoading) {
+                pageLoading.classList.add('show');
+            }
+        }
+
+        function hidePageLoading() {
+            const pageLoading = document.getElementById('page-loading');
+            if (pageLoading) {
+                pageLoading.classList.remove('show');
+            }
+        }
+
+        // Show loading on form submissions and link clicks
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && e.target.href && !e.target.href.includes('#') && !e.target.target) {
+                showPageLoading();
+            }
+        });
+
+        document.addEventListener('submit', function(e) {
+            showPageLoading();
+        });
+
+        // Hide loading when page is fully loaded
+        window.addEventListener('load', function() {
+            hidePageLoading();
+        });
+
+        // Hide loading if page load takes too long
+        setTimeout(function() {
+            hidePageLoading();
+        }, 10000);
+
         // Auto-hide messages after 5 seconds
         setTimeout(function() {
             const messages = document.querySelectorAll('.alert-message');
