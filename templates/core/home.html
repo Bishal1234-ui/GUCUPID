@@ -624,13 +624,13 @@ function showAppPopup(title, message, type) {
     const popup = document.createElement('div');
     popup.id = 'app-popup';
     popup.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-    
+
     const bgColor = type === 'success' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200';
     const iconColor = type === 'success' ? 'text-green-600' : 'text-red-600';
     const icon = type === 'success' ? 
         '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>' :
         '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
-    
+
     popup.innerHTML = `
         <div class="bg-white rounded-lg p-6 max-w-sm mx-4 border-2 ${bgColor}">
             <div class="flex items-center mb-4">
@@ -646,9 +646,9 @@ function showAppPopup(title, message, type) {
             </button>
         </div>
     `;
-    
+
     document.body.appendChild(popup);
-    
+
     // Auto-remove after 5 seconds
     setTimeout(() => {
         if (document.getElementById('app-popup')) {
@@ -656,5 +656,44 @@ function showAppPopup(title, message, type) {
         }
     }, 5000);
 }
+// Tab switching with refresh functionality
+        function refreshAndShowTab(tabName) {
+            // If clicking the same active tab, refresh the page
+            const currentActiveTab = document.querySelector('.tab-button.active').dataset.tab;
+            if (currentActiveTab === tabName) {
+                location.reload();
+                return;
+            }
+
+            // Update active button
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Show/hide content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+        }
+
+        // Original tab switching for legacy support
+       
+
+// Tab switching
+ document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.dataset.tab;
+
+                // Update active button
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // Show/hide content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(tabName + '-tab').classList.remove('hidden');
+            });
+        });
 </script>
 {% endblock %}
