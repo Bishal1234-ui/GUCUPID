@@ -18,6 +18,8 @@
             }
         }
     </script>
+    {% load static %}
+    <script src="{% static 'js/notifications.js' %}"></script>
     <style>
         .gradient-romantic {
             background: linear-gradient(135deg, #FF6B9D 0%, #9B59B6 100%);
@@ -50,10 +52,10 @@
             {% endfor %}
         </div>
     {% endif %}
-    
+
     {% block content %}
     {% endblock %}
-    
+
     <script>
         // Auto-hide messages after 5 seconds
         setTimeout(function() {

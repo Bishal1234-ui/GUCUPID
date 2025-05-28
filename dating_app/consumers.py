@@ -54,6 +54,26 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
+        # Send notification to the other user
+        match = await self.get_match()
+        other_user = await self.get_other_user(message.sender, match)
+        
+        await self.channel_layer.group_send(
+            f'user_{other_user.id}',
+            {
+                'type': 'send_notification',
+                'notification': {
+                    'type': 'message',
+                    'message': f'{sender_username} sent you a message',
+                    'data': {
+                        'match_id': self.match_id,
+                        'sender': sender_username,
+                        'content': message_content[:50] + ('...' if len(message_content) > 50 else '')
+                    }
+                }
+            }
+        )
+
     async def chat_message(self, event):
         message = event['message']
 
@@ -71,3 +91,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             sender=user,
             content=content
         )
+
+    @database_sync_to_async
+    def get_match(self):
+        return Match.objects.get(id=self.match_id)
+
+    @database_sync_to_async
+    def get_other_user(self, sender, match):
+        return match.user2 if match.user1 == sender else match.user1

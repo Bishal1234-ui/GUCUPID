@@ -91,6 +91,18 @@
 </div>
 
 <script>
+// Set current chat match for notification system
+if (window.notificationSystem) {
+    window.notificationSystem.setCurrentChatMatch('{{ match.id }}');
+}
+
+// Clear when leaving page
+window.addEventListener('beforeunload', () => {
+    if (window.notificationSystem) {
+        window.notificationSystem.clearCurrentChatMatch();
+    }
+});
+
 const messagesContainer = document.getElementById('messages-container');
 const messageForm = document.getElementById('message-form');
 const messageInput = document.getElementById('message-input');
