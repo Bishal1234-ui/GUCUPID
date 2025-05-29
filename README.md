@@ -1,6 +1,6 @@
 # GUCupid 💕
 
-**A Beautiful Dating App for Gauhati University Students**
+**A Beautiful Full Stack Dating App for Gauhati University Students**
 
 ![GUCupid Banner](https://img.shields.io/badge/GUCupid-Find%20Your%20Perfect%20Match-FF6B9D?style=for-the-badge&logo=heart&logoColor=white)
 
