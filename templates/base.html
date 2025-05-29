@@ -251,7 +251,7 @@
                     // Show splash screen for 4 seconds
                     setTimeout(function() {
                         splashScreen.style.animation = 'fadeOut 0.5s ease-in-out forwards';
-                    }, 4000);
+                    }, 2000);
                 }
             }
         });
@@ -271,21 +271,21 @@
             }
         }
 
-        // Show loading on form submissions and link clicks
-        document.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A' && e.target.href && !e.target.href.includes('#') && !e.target.target) {
-                showPageLoading();
-            }
-        });
+        // // Show loading on form submissions and link clicks
+        // document.addEventListener('click', function(e) {
+        //     if (e.target.tagName === 'A' && e.target.href && !e.target.href.includes('#') && !e.target.target) {
+        //         showPageLoading();
+        //     }
+        // });
 
-        document.addEventListener('submit', function(e) {
-            showPageLoading();
-        });
+        // document.addEventListener('submit', function(e) {
+        //     showPageLoading();
+        // });
 
-        // Hide loading when page is fully loaded
-        window.addEventListener('load', function() {
-            hidePageLoading();
-        });
+        // // Hide loading when page is fully loaded
+        // window.addEventListener('load', function() {
+        //     hidePageLoading();
+        // });
 
         // Hide loading if page load takes too long
         setTimeout(function() {
