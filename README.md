@@ -15,6 +15,15 @@
 
 GUCupid is a modern, feature-rich dating application specifically designed for Gauhati University students. Built with Django and real-time WebSocket technology, it provides a safe and engaging platform for university students to connect, match, and build meaningful relationships within their academic community.
 
+## Screenshots
+![Screenshot 2025-05-29 133157](https://github.com/user-attachments/assets/120db603-d711-45d9-8ede-a4738e36a880)
+![WhatsApp Image 2025-05-29 at 13 27 09_db8bac0c](https://github.com/user-attachments/assets/76dd31b0-5753-4fd7-9784-079fde9757b7)
+![Screenshot 2025-05-29 132947](https://github.com/user-attachments/assets/d99fb4b0-ef2d-44d4-ab44-eb552cc1aad4)
+![Screenshot 2025-05-29 133053](https://github.com/user-attachments/assets/5affa90e-a013-4071-90ea-ab0214b7a221)
+
+
+
+
 ## ✨ Features
 
 ### 🔐 **Authentication & Profile Management**
